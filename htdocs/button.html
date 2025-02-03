@@ -1,0 +1,15 @@
+<!DOCTYPE HTML>
+<html> 
+  <head>
+    <title>Click a button to create another button</title>
+    <script>
+      var i = 0; 
+      function addbutton() {
+        document.write('<button onclick="addbutton()">Button ' + (++i) + '</button>');
+      }
+    </script>
+  </head>
+  <body>
+    <button onclick="addbutton()">Create Button</button>
+  </body>
+</html>

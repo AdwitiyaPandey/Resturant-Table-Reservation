@@ -33,7 +33,7 @@ def submit_data():
         if connection.is_connected():
             connection.close()
 
-# Tkinter GUI setup
+# Tkinter GUI setup #Adwitiya B. Pandey
 root = Tk()
 root.title("Restaurant Table Booking System")
 root.iconbitmap("table.ico")

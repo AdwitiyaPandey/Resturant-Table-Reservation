@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtual Drum Kit</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      background-color: #f3f3f3;
+    }
+    .drum-pad {
+      display: inline-block;
+      margin: 10px;
+      padding: 20px;
+      background-color: #444;
+      color: white;
+      font-size: 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .drum-pad:active {
+      background-color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>Play the Drums!</h1>
+  <div id="drum-kit">
+    <div class="drum-pad" data-key="Q">Kick (Q)</div>
+    <div class="drum-pad" data-key="W">Snare (W)</div>
+    <div class="drum-pad" data-key="E">Hi-hat (E)</div>
+  </div>
+
+  <audio id="kick" src="kick.wav"></audio>
+  <audio id="snare" src="snare.wav"></audio>
+  <audio id="hihat" src="hihat.wav"></audio>
+
+  <script>
+    const soundMap = {
+      Q: document.getElementById('kick'),
+      W: document.getElementById('snare'),
+      E: document.getElementById('hihat')
+    };
+
+    function playSound(key) {
+      const sound = soundMap[key];
+      if (sound) {
+        sound.currentTime = 0; // Rewind to start
+        sound.play();
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const key = e.key.toUpperCase();
+      playSound(key);
+    });
+
+    document.querySelectorAll('.drum-pad').forEach(pad => {
+      pad.addEventListener('click', () => {
+        const key = pad.getAttribute('data-key');
+        playSound(key);
+      });
+    });
+  </script>
+</body>
+</html>
