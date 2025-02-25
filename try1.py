@@ -18,12 +18,12 @@ def submit_data():
         connection = mysql.connector.connect(
             host='localhost',
             database='restaurant_booking',
-            user='root',  # replace with your MySQL username
-            password=''  # replace with your MySQL password
+            user='root', 
+            password='
         )
 
         if connection.is_connected():
-            cursor = connection.cursor() #learn more about cursor
+            cursor = connection.cursor() 
             sql_insert_query = """ INSERT INTO bookings (name, contact, location, date, guests, time1)
                                    VALUES (%s, %s, %s, %s, %s, %s) """
             cursor.execute(sql_insert_query, (name, contact, location, date, guests, time_selected))
@@ -38,7 +38,6 @@ def submit_data():
 
 
 def open_admin_login(): #Adwitiya B. Pandey
-    # Create popup window
     admin_window = Toplevel(root)
     admin_window.title("Admin Login")
     admin_window.geometry("300x150")
@@ -166,7 +165,7 @@ Label(text="Guests", font="Garamond 10 bold",bg= "Dark cyan").place(x=288, y=250
 
 
 
-e1 = Entry(root) #learn more about entry
+e1 = Entry(root) 
 e1.place(x=420, y=50)
 e2 = Entry(root)
 e2.place(x=420, y=90)
@@ -185,7 +184,6 @@ submit_button = Button(root, text="DINE-IN", command=submit_data,bg= "Gray")
 submit_button.place(x=400, y=350)
 submit_button2 = Button(root, text="ADMIN", command=open_admin_login, bg="Gray")
 submit_button2.place(x=500, y=350)
-
 #submit_login = Button(root, text="Login", command=login)
 
 root.mainloop()
