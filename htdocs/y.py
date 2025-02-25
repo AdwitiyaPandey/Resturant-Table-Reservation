@@ -1,197 +1,98 @@
-import sqlite3
-from sqlite3 import Error
-import csv
-
-DB_NAME = "user.sqlite3"
-FILE_NAME = "sample_users.csv"
-
-COLUMNS = (
-    "first_name",
-    "last_name",
-    "company_name",
-    "address",
-    "city",
-    "county",
-    "state",
-    "zip",
-    "phone1",
-    "phone2",
-    "email",
-    "web",
-)
-
-
-def create_connection():
-    try:
-        con = sqlite3.connect(DB_NAME)
-        return con
-    except Error as e:
-        print("Connection error")
-    except Exception as e:
-        print(str(e))
-
-
-def create_table(con):
-    CREATE_USERS_TABLE_QUERY = """
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            first_name CHAR(255) NOT NULL,
-            last_name CHAR(255) NOT NULL,
-            company_name CHAR(255) NOT NULL,
-            address CHAR(255) NOT NULL,
-            city CHAR(255) NOT NULL,
-            county CHAR(255) NOT NULL,
-            state CHAR(255) NOT NULL,
-            zip REAL NOT NULL,
-            phone1 CHAR(255) NOT NULL,
-            phone2 CHAR(255),
-            email CHAR(255) NOT NULL,
-            web text
-        );
-    """
-    cur = con.cursor()
-    cur.execute(CREATE_USERS_TABLE_QUERY)
-    print("Successfully created the table. ")
-
-
-def read_csv():
-    parsed_users = []
-    with open(FILE_NAME) as f:
-        data = csv.reader(f)
-        for user in data:
-            parsed_users.append(tuple(user))
-
-    return parsed_users[1:]
-
-
-INPUT_STRING = """
-Enter the option: 
-    1. CREATE TABLE
-    2. DUMP users from csv INTO users TABLE
-    3. ADD new user INTO users TABLE
-    4. QUERY all users from TABLE
-    5. QUERY user by id from TABLE
-    6. QUERY specified no. of records from TABLE
-    7. DELETE all users
-    8. DELETE user by id
-    9. UPDATE user
-    10. Press any key to EXIT
+from tkinter import *
+import mysql.connector
+from mysql.connector import Error
+from PIL import ImageTk, Image
+from tkinter import ttk
+from tkinter import messagebox, ttk
+from datetime import datetime
+"""
+Author:Tsewang Bista
+Created on: 2025-02-25
+Description: Restaurant Table Booking System using Tkinter and MySQL.
 """
 
+def submit_data():
+    name = e1.get()
+    contact = e2.get()
+    location = e3.get()
+    date = e4.get()  # Ensure this is in 'YYYY-MM-DD' format for MySQL
+    guests = e6.get() #post()
+    time_selected = time_dropdown.get()
 
-def insert_users(con, users):
-    user_add_query = """
-        INSERT INTO users
-        (
-            first_name,
-            last_name,
-            company_name,
-            address,
-            city,
-            county,
-            state,
-            zip,
-            phone1,
-            phone2,
-            email,
-            web
+    try: #learn more about try and except and finally
+        connection = mysql.connector.connect(
+            host='localhost',
+            database='restaurant_booking',
+            user='root', #use restaurant username
+            password=''  #use sql password 101everest and 102kcf
         )
-        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-    """
-    cur = con.cursor()
-    cur.executemany(user_add_query, users)
-    con.commit()
-    print(f"{len(users)} users were imported successfully.")
+
+        if connection.is_connected():
+            cursor = connection.cursor() 
+            sql_insert_query = """ INSERT INTO bookings (name, contact, location, date, guests, time1)
+                                   VALUES (%s, %s, %s, %s, %s, %s) """
+            cursor.execute(sql_insert_query, (name, contact, location, date, guests, time_selected))
+            connection.commit()
+            print("Record inserted successfully into bookings table")
+            cursor.close()
+    except Error as e:
+        print("Failed to insert record into MySQL table {}".format(e))
+    finally:
+        if connection.is_connected():
+            connection.close()
 
 
-def select_users(con, no_of_users=0):
-    cur = con.cursor()
-    users = cur.execute("SELECT * FROM users;")
-    for i, user in enumerate(users):
-        if no_of_users and no_of_users == i:
-            break
-        print(user)
+root = Tk()
+root.title("Restaurant Table Booking System")
+root.iconbitmap("table.ico")
+root.geometry("600x400")
+root.resizable(0, 0)
+image_path = r"/Users/tsewangbista/Desktop/backend/F511855D-6DBD-4004-A4C4-CBABF487CFA2.jpeg"
+image = Image.open(image_path)
+image = image.resize((283, 600))  
+bg_image = ImageTk.PhotoImage(image)
+
+bg_label = Label(root, image=bg_image)
+bg_label.pack(side="left", fill="y") 
+root.config(bg="Dark cyan")
+
+choices = ['12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM', '5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM', '8:30 PM', '9:00 PM', '9:30 PM', '10:00 PM', '10:30 PM', '11:00 PM', '11:30 PM']
+time_dropdown =ttk.Combobox(root, values=["12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM", "10:00 PM", "10:30 PM", "11:00 PM", "11:30 PM"])
+time_dropdown.place(x=420, y=210)
 
 
-def select_user_by_id(con, user_id):
-    cur = con.cursor()
-    users = cur.execute("SELECT * FROM users where id = ?;", (user_id,))
-    for user in users:
-        print(user)
 
 
-def delete_users(con):
-    cur = con.cursor()
-    cur.execute("DELETE FROM users;")
-    con.commit()
-    print("All users were deleted successfully")
+
+Label(root, text="Dine Reserve", font="Lobster 15 bold",bg= "Dark cyan").pack()
+Label(text="Name", font="Garamond 10 bold",bg= "Dark cyan").place(x=288, y=50)
+Label(text="Contact", font="Garamond 10 bold",bg= "Dark cyan").place(x=288, y=90)
+Label(text="Location, Restaurant", font="Garamond 10 bold",bg= "Dark cyan").place(x=288, y=130)
+Label(text="Date (YYYY-MM-DD)", font="Garamond 10 bold",bg= "Dark cyan").place(x=288, y=170)
+Label(text="Time", font="Garamond 10 bold",bg= "Dark cyan").place(x=288, y=210)
+Label(text="Guests", font="Garamond 10 bold",bg= "Dark cyan").place(x=288, y=250)
 
 
-def delete_user_by_id(con, user_id):
-    cur = con.cursor()
-    cur.execute("DELETE FROM users where id = ?", (user_id,))
-    con.commit()
-    print(f"User with id [{user_id}] was successfully deleted.")
+
+e1 = Entry(root) 
+e1.place(x=420, y=50)
+e2 = Entry(root)
+e2.place(x=420, y=90)
+e3 = Entry(root)
+e3.place(x=420, y=130)
+e4 = Entry(root)
+e4.place(x=420, y=170)
+e6 = Entry(root)
+e6.place(x=420, y=250)
 
 
-def update_user_by_id(con, user_id, column_name, column_value):
-    update_query = f"UPDATE users set {column_name}=? where id = ?;"
-    cur = con.cursor()
-    cur.execute(update_query, (column_value, user_id))
-    con.commit()
-    print(
-        f"[{column_name}] was updated with value [{column_value}] of user with id [{user_id}]"
-    )
+# Submit Button
 
 
-def main():
-    con = create_connection()
-    user_input = input(INPUT_STRING)
+submit_button = Button(root, text="DINE-IN", command=submit_data,bg= "Gray")
+submit_button.place(x=400, y=350)
 
-    if user_input == "1":
-        create_table(con)
+#submit_login = Button(root, text="Login", command=login)
 
-    elif user_input == "2":
-        users = read_csv()
-        insert_users(con, users)
+root.mainloop()
 
-    elif user_input == "3":
-        input_data = []
-        for c in COLUMNS:
-            column_value = input(f"Enter the value of {c}: ")
-            input_data.append(column_value)
-        users = [tuple(input_data)]
-        insert_users(con, users)
-
-    elif user_input == "4":
-        select_users(con)
-
-    elif user_input == "5":
-        user_id = input("Enter id of user: ")
-        select_user_by_id(con, user_id)
-
-    elif user_input == "6":
-        no_of_users = input("Enter the no of users to fetch: ")
-        if no_of_users.isnumeric() and int(no_of_users) > 0:
-            select_users(con, no_of_users=int(no_of_users))
-
-    elif user_input == "7":
-        delete_users(con)
-
-    elif user_input == "8":
-        user_id = input("Enter id of user: ")
-        delete_user_by_id(con, user_id)
-
-    elif user_input == "9":
-        user_id = input("Enter id of user: ")
-        if user_id.isnumeric():
-            column_name = input(
-                f"Enter the column you want to edit. Please make sure column is with in {COLUMNS}: "
-            )
-            if column_name in COLUMNS:
-                column_value = input(f"Enter the value of {column_name}: ")
-                update_user_by_id(con, user_id, column_name, column_value)
-
-
-if __name__ == "__main__":
-    main()
