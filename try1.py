@@ -18,8 +18,8 @@ def submit_data():
         connection = mysql.connector.connect(
             host='localhost',
             database='restaurant_booking',
-            user='root', 
-            password='
+            user='root', #use restaurant username
+            password=''  #use sql password 101everest and 102kcf
         )
 
         if connection.is_connected():
