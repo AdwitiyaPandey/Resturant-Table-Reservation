@@ -2,8 +2,21 @@ from tkinter import *
 from tkinter import ttk
 from PIL import Image, ImageTk
 from tkinter import messagebox, ttk
-#this will be the gui of our project
-#The frontend
+"""
+Restaurant Table Booking System - GUI
+This script creates a Tkinter-based graphical user interface (GUI) for users to book tables at a restaurant.
+
+Features:
+- Background image for UI aesthetics
+- Labels and input fields for user details (Name, Contact, Location, Date, Time, Guests)
+- Dropdown selection for time slots
+- Basic UI setup using Tkinter and ttk widgets
+
+Author: [Adwitiya Pandey]
+Date: [2025-02-11]
+"""
+
+
 root = Tk()
 root.title("Restaurant Table Booking System")
 root.iconbitmap("table.ico")
