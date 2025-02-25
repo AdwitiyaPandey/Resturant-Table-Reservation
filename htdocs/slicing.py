@@ -1,2 +1,0 @@
-a = 'python'
-print(a[ : ])
