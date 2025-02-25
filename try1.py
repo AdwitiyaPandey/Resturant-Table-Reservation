@@ -3,13 +3,16 @@ import mysql.connector
 from mysql.connector import Error
 from PIL import ImageTk, Image
 from tkinter import ttk
+from tkinter import messagebox, ttk
+from datetime import datetime
 
 def submit_data():
     name = e1.get()
     contact = e2.get()
     location = e3.get()
     date = e4.get()  # Ensure this is in 'YYYY-MM-DD' format for MySQL
-    guests = e5.get() #post()
+    guests = e6.get() #post()
+    time_selected = time_dropdown.get()
 
     try: #learn more about try and except and finally
         connection = mysql.connector.connect(
@@ -21,9 +24,9 @@ def submit_data():
 
         if connection.is_connected():
             cursor = connection.cursor() #learn more about cursor
-            sql_insert_query = """ INSERT INTO bookings (name, contact, location, date, guests)
-                                   VALUES (%s, %s, %s, %s, %s) """
-            cursor.execute(sql_insert_query, (name, contact, location, date, guests))
+            sql_insert_query = """ INSERT INTO bookings (name, contact, location, date, guests, time1)
+                                   VALUES (%s, %s, %s, %s, %s, %s) """
+            cursor.execute(sql_insert_query, (name, contact, location, date, guests, time_selected))
             connection.commit()
             print("Record inserted successfully into bookings table")
             cursor.close()
@@ -33,6 +36,103 @@ def submit_data():
         if connection.is_connected():
             connection.close()
 
+
+def open_admin_login(): #Adwitiya B. Pandey
+    # Create popup window
+    admin_window = Toplevel(root)
+    admin_window.title("Admin Login")
+    admin_window.geometry("300x150")
+    admin_window.grab_set()
+    
+
+    Label(admin_window, text="Username:").pack(pady=5)
+    admin_name_entry = Entry(admin_window)
+    admin_name_entry.pack()
+    
+    Label(admin_window, text="Password:").pack(pady=5)
+    admin_uid_entry = Entry(admin_window, show="*")  # Mask UID input
+    admin_uid_entry.pack()
+
+    def verify_admin():  
+        input_name = admin_name_entry.get()
+        input_uid = admin_uid_entry.get()
+
+        try:
+            connection = mysql.connector.connect(
+                host='localhost',
+                database='admin',
+                user='root',
+                password=''
+            )
+
+            if connection.is_connected():
+                cursor = connection.cursor()
+                cursor.execute("SELECT * FROM login WHERE name = %s AND uid = %s", 
+                               (input_name, input_uid))
+                result = cursor.fetchone()
+
+                if result:
+                    messagebox.showinfo("Success", "Login Successful!")
+                    admin_window.destroy()
+                    show_reservations(input_name)  # Show reservations based on restaurant
+                else:
+                    messagebox.showerror("Error", "Invalid Credentials")
+                cursor.close()
+
+        except Error as e:
+            messagebox.showerror("Database Error", str(e))
+        finally:
+            if connection.is_connected():
+                connection.close()
+    
+    Button(admin_window,text="Log-in", command=verify_admin).pack(pady=10)
+
+def show_reservations(restaurant_name):
+    # Create a new window
+    reservations_window = Toplevel(root)
+    reservations_window.title(f"{restaurant_name} Reservations")
+    reservations_window.geometry("600x400")
+
+    # Connect to the database
+    try:
+        connection = mysql.connector.connect(
+            host='localhost',
+            database='restaurant_booking',
+            user='root',
+            password=''
+        )
+
+        if connection.is_connected():
+            cursor = connection.cursor()
+            cursor.execute("SELECT * FROM bookings WHERE location = %s", (restaurant_name,))
+            reservations = cursor.fetchall()
+
+            # Create table
+            columns = ("ID", "Name", "Contact", "Location", "Date", "Guests", "Time")
+            tree = ttk.Treeview(reservations_window, columns=columns, show="headings")
+
+            # Define column headings
+            for col in columns:
+                tree.heading(col, text=col)
+                tree.column(col, width=100, anchor="center")
+
+            # Insert data into the table
+            for res in reservations:
+                tree.insert("", "end", values=res)
+
+            tree.pack(expand=True, fill="both")
+
+            cursor.close()
+
+    except Error as e:
+        messagebox.showerror("Database Error", str(e))
+    finally:
+        if connection.is_connected():
+            connection.close()
+
+
+
+    
 # Tkinter GUI setup #Adwitiya B. Pandey
 root = Tk()
 root.title("Restaurant Table Booking System")
@@ -48,6 +148,11 @@ bg_label = Label(root, image=bg_image)
 bg_label.pack(side="left", fill="y") 
 root.config(bg="Dark cyan")
 
+choices = ['12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM', '5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM', '8:30 PM', '9:00 PM', '9:30 PM', '10:00 PM', '10:30 PM', '11:00 PM', '11:30 PM']
+time_dropdown =ttk.Combobox(root, values=["12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM", "10:00 PM", "10:30 PM", "11:00 PM", "11:30 PM"])
+time_dropdown.place(x=420, y=210)
+
+
 
 
 
@@ -59,6 +164,8 @@ Label(text="Date (YYYY-MM-DD)", font="Garamond 10 bold",bg= "Dark cyan").place(x
 Label(text="Time", font="Garamond 10 bold",bg= "Dark cyan").place(x=288, y=210)
 Label(text="Guests", font="Garamond 10 bold",bg= "Dark cyan").place(x=288, y=250)
 
+
+
 e1 = Entry(root) #learn more about entry
 e1.place(x=420, y=50)
 e2 = Entry(root)
@@ -67,16 +174,19 @@ e3 = Entry(root)
 e3.place(x=420, y=130)
 e4 = Entry(root)
 e4.place(x=420, y=170)
-e5 = Entry(root)
-e5.place(x=420, y=210)
 e6 = Entry(root)
 e6.place(x=420, y=250)
 
-# Submit Button
-submit_button = Button(root, text="DineIN", command=submit_data,bg= "Gray")
-submit_button.place(x=400, y=300)
-#submit_login = Button(root, text="Login", command=login)
 
+# Submit Button
+
+
+submit_button = Button(root, text="DINE-IN", command=submit_data,bg= "Gray")
+submit_button.place(x=400, y=350)
+submit_button2 = Button(root, text="ADMIN", command=open_admin_login, bg="Gray")
+submit_button2.place(x=500, y=350)
+
+#submit_login = Button(root, text="Login", command=login)
 
 root.mainloop()
 
