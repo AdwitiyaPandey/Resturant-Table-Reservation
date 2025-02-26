@@ -181,22 +181,16 @@ def fetch_locations():
             password="",
             database="admin"
         )
-
         if connection.is_connected():
-            with connection.cursor() as cursor:
-                cursor.execute("SELECT name FROM login")  
-                locations = [row[0] for row in cursor.fetchall()]  
+            cursor = connection.cursor()
+            cursor.execute("SELECT name FROM login")  
+            locations = [row[0] for row in cursor.fetchall()] 
+            cursor.close()
+            connection.close()
             return locations
-
     except Error as e:
         print(f"Error fetching locations: {e}")
         return []
-
-    finally:
-        if 'connection' in locals() and connection.is_connected():
-            connection.close()
-
-
 
 
 
