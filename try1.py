@@ -14,40 +14,15 @@ from datetime import datetime
 
 #Function To submit the data retrieved from the form fields 
 
-def submit_data():
-    name = e1.get()
-    contact = e2.get()
-    location = location_dropdown.get()
-    date = e4.get()  # Ensure this is in 'YYYY-MM-DD' format for MySQL
-    guests = e6.get() #post()
-    time_selected = time_dropdown.get()
-     
-    if not name or not contact or not location or not date or not guests or not time_selected:
-        messagebox.showerror("Input Error", "All fields are required!")
-        return
-
-    try: #learn more about try and except and finally
-        connection = mysql.connector.connect(
-            host='localhost',
-            database='restaurant_booking',
-            user='root',  
-            password=''  
-        )
-
-        if connection.is_connected():
-            cursor = connection.cursor() #learn more about cursor
-            sql_insert_query = """ INSERT INTO bookings (name, contact, location, guests, time1, date)
-                                   VALUES (%s, %s, %s, %s, %s, %s) """
-            cursor.execute(sql_insert_query, (name, contact, location, guests, time_selected, date))
-            connection.commit()
-            print("Record inserted successfully into bookings table")
-            cursor.close()
-            messagebox.showinfo("Success", "Booking Successful!")
-    except Error as e:
-        print("Failed to insert record into MySQL table {}".format(e))
-    finally:
-        if connection.is_connected():
-            connection.close()
+try:
+    key = "correct_key"
+    if key != "correct_key":
+        raise ValueError("Wrong key!")
+    print("Door unlocked.")  # Runs only if no error occurs
+except ValueError as e:
+    print(f"Error: {e}")  # Handles errors
+finally:
+    print("Locking the door...")  # Always runs (cleanup)
 
 
 
