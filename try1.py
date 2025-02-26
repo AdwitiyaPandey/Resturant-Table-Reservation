@@ -173,7 +173,6 @@ def show_reservations(restaurant_name):
 # Needed to make a dropdown for the locations available (partnered location)
 
 
-
 def fetch_locations():
     try:
         connection = mysql.connector.connect(
@@ -182,20 +181,20 @@ def fetch_locations():
             password="",
             database="admin"
         )
+
         if connection.is_connected():
-            cursor = connection.cursor()
-            cursor.execute("SELECT name FROM login")  
-            locations = [row[0] for row in cursor.fetchall()] 
-            cursor.close()
-            connection.close()
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT name FROM login")  
+                locations = [row[0] for row in cursor.fetchall()]  
             return locations
+
     except Error as e:
         print(f"Error fetching locations: {e}")
         return []
 
-
-    
-    
+    finally:
+        if 'connection' in locals() and connection.is_connected():
+            connection.close()
 
 
 
