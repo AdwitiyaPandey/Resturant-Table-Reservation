@@ -14,8 +14,6 @@ from datetime import datetime
 
 #Function To submit the data retrieved from the form fields 
 
-import mysql.connector
-
 connection = mysql.connector.connect(
     host='localhost',
     database='restaurant_booking',
