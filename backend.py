@@ -17,7 +17,7 @@ def submit_data():
     contact = e2.get()
     location = e3.get()
     date = e4.get()  # Ensure this is in 'YYYY-MM-DD' format for MySQL
-    guests = e6.get() #post()
+    guests = e6.get() 
     time_selected = time_dropdown.get()
 
     try: #learn more about try and except and finally
@@ -25,7 +25,7 @@ def submit_data():
             host='localhost',
             database='restaurant_booking',
             user='root', #use restaurant username
-            password=''  #use sql password 101everest and 102kcf
+            password=''  #use sql password 101everest for Everest Hotel, 102kcf for KCF, 103rusty for RoadRusty, 104mm Momo Magic
         )
 
         if connection.is_connected():
@@ -87,7 +87,6 @@ e6 = Entry(root)
 e6.place(x=420, y=250)
 
 
-# Submit Button
 
 
 submit_button = Button(root, text="DINE-IN", command=submit_data,bg= "Gray")
@@ -101,8 +100,6 @@ admin_button.bind("<Leave>", on_leave_admin)
 
 dinein_button.grid(row=5, column=1, pady=20, padx=20)
 admin_button.grid(row=5, column=2, pady=20, padx=20)
-#//
-#submit_login = Button(root, text="Login", command=login)
 
 root.mainloop()
 
