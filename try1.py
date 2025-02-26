@@ -14,16 +14,23 @@ from datetime import datetime
 
 #Function To submit the data retrieved from the form fields 
 
-try:
-    key = "correct_key"
-    if key != "correct_key":
-        raise ValueError("Wrong key!")
-    print("Door unlocked.")  # Runs only if no error occurs
-except ValueError as e:
-    print(f"Error: {e}")  # Handles errors
-finally:
-    print("Locking the door...")  # Always runs (cleanup)
+import mysql.connector
 
+connection = mysql.connector.connect(
+    host='localhost',
+    database='restaurant_booking',
+    user='root',
+    password=''
+)
+
+cursor = connection.cursor()
+cursor.execute("SELECT * FROM bookings")  
+rows = cursor.fetchall()  # Fetch all records
+for row in rows:
+    print(row)
+
+cursor.close()
+connection.close()
 
 
 
