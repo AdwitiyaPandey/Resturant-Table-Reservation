@@ -12,7 +12,23 @@ from datetime import datetime
 
 
 
+#Function To submit the data retrieved from the form fields 
 
+connection = mysql.connector.connect(
+    host='localhost',
+    database='restaurant_booking',
+    user='root',
+    password=''
+)
+
+cursor = connection.cursor()
+cursor.execute("SELECT * FROM bookings")  
+rows = cursor.fetchall()  # Fetch all records
+for row in rows:
+    print(row)
+
+cursor.close()
+connection.close()
 
 
 
