@@ -8,25 +8,19 @@ from datetime import datetime
 
 
 
-
-
-
-
-#Function To submit the data retrieved from the form fields 
-
 def submit_data():
     name = e1.get()
     contact = e2.get()
     location = location_dropdown.get()
-    date = e4.get()  # Ensure this is in 'YYYY-MM-DD' format for MySQL
-    guests = e6.get() #post()
+    date = e4.get()  
+    guests = e6.get() 
     time_selected = time_dropdown.get()
      
     if not name or not contact or not location or not date or not guests or not time_selected:
         messagebox.showerror("Input Error", "All fields are required!")
         return
 
-    try: #learn more about try and except and finally
+    try: 
         connection = mysql.connector.connect(
             host='localhost',
             database='restaurant_booking',
@@ -35,7 +29,7 @@ def submit_data():
         )
 
         if connection.is_connected():
-            cursor = connection.cursor() #learn more about cursor
+            cursor = connection.cursor() 
             sql_insert_query = """ INSERT INTO bookings (name, contact, location, guests, time1, date)
                                    VALUES (%s, %s, %s, %s, %s, %s) """
             cursor.execute(sql_insert_query, (name, contact, location, guests, time_selected, date))
@@ -51,16 +45,6 @@ def submit_data():
 
 
 
-
-
-
-
-
-
-
-#Opens the login page of admin and verifies it under the same pop-up. (via .grab_set())
-
-
 def open_admin_login(): 
     # Create popup window
     admin_window = Toplevel(root)
@@ -74,7 +58,7 @@ def open_admin_login():
     admin_name_entry.pack()
     
     Label(admin_window, text="Password:").pack(pady=5)
-    admin_uid_entry = Entry(admin_window, show="*")  # Mask UID input
+    admin_uid_entry = Entry(admin_window, show="*")  
     admin_uid_entry.pack()
 
     def verify_admin():  
@@ -98,7 +82,7 @@ def open_admin_login():
                 if result:
                     messagebox.showinfo("Success", "Login Successful!")
                     admin_window.destroy()
-                    show_reservations(input_name)  # Show reservations based on restaurant
+                    show_reservations(input_name)  
                 else:
                     messagebox.showerror("Error", "Invalid Credentials")
                 cursor.close()
@@ -116,15 +100,12 @@ def open_admin_login():
 
 
 
-# To show the table (for the admin dashboard to see the reservations made)
-
 def show_reservations(restaurant_name):
-    # Create a new window
+  
     reservations_window = Toplevel(root)
     reservations_window.title(f"{restaurant_name} Reservations")
     reservations_window.geometry("800x400")
 
-    # Connect to the database
     try:
         connection = mysql.connector.connect(
             host='localhost',
@@ -138,16 +119,13 @@ def show_reservations(restaurant_name):
             cursor.execute("SELECT * FROM bookings WHERE location = %s", (restaurant_name,))
             reservations = cursor.fetchall()
 
-            # Create table
             columns = ("ID", "Name", "Contact", "Location", "Guests", "Time", "Date")
             tree = ttk.Treeview(reservations_window, columns=columns, show="headings")
 
-            # Define column headings
             for col in columns:
                 tree.heading(col, text=col)
                 tree.column(col, width=100, anchor="center")
 
-            # Insert data into the table
             for res in reservations:
                 tree.insert("", "end", values=res)
 
@@ -170,7 +148,6 @@ def show_reservations(restaurant_name):
 
 
 
-# Needed to make a dropdown for the locations available (partnered location)
 
 
 
@@ -204,8 +181,7 @@ def fetch_locations():
 
 
 
-    
-# Tkinter GUI setup 
+
 root = Tk()
 root.title("Restaurant Table Booking System")
 root.iconbitmap("table.ico")
@@ -230,14 +206,13 @@ root.config(bg="Dark cyan")
 
 
 
-#location dropdown 
+
 locations = fetch_locations()  
 location_dropdown = ttk.Combobox(root, values=locations)
 location_dropdown.place(x=420, y=130)
 
 
 
-# Time dropdown
 choices = ['12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM', '5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM', '8:30 PM', '9:00 PM', '9:30 PM', '10:00 PM', '10:30 PM', '11:00 PM', '11:30 PM']
 time_dropdown =ttk.Combobox(root, values=["12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM", "10:00 PM", "10:30 PM", "11:00 PM", "11:30 PM"])
 time_dropdown.place(x=420, y=210)
@@ -252,7 +227,7 @@ time_dropdown.place(x=420, y=210)
 
 
 
-#Front end set-up
+
 
 Label(root, text="Dine Reserve", font="Lobster 15 bold",bg= "Dark cyan").pack()
 Label(text="Name", font="Garamond 10 bold",bg= "Dark cyan").place(x=288, y=50)
@@ -281,13 +256,12 @@ e6.place(x=420, y=250)
 
 
 
-# Submit Buttons
+
 
 submit_button = Button(root, text="DINE-IN", command=submit_data,bg= "Gray")
 submit_button.place(x=400, y=350)
 submit_button2 = Button(root, text="ADMIN", command=open_admin_login, bg="Gray")
 submit_button2.place(x=500, y=350)
 
-#submit_login = Button(root, text="Login", command=login)
 
 root.mainloop()
