@@ -7,6 +7,8 @@ from tkinter import messagebox, ttk
 from datetime import datetime
 """
 Author:Tsewang Bista
+Created on: 2025-02-25
+Description: Restaurant Table Booking System using Tkinter and MySQL. change in different
 
 """
 
