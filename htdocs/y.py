@@ -7,8 +7,7 @@ from tkinter import messagebox, ttk
 from datetime import datetime
 """
 Author:Tsewang Bista
-Created on: 2025-02-25
-Description: Restaurant Table Booking System using Tkinter and MySQL.
+
 """
 
 def submit_data():
@@ -91,7 +90,16 @@ e6.place(x=420, y=250)
 
 submit_button = Button(root, text="DINE-IN", command=submit_data,bg= "Gray")
 submit_button.place(x=400, y=350)
+#added
+dinein_button.bind("<Enter>", on_enter_dinein)
+dinein_button.bind("<Leave>", on_leave_dinein)
+admin_button.bind("<Enter>", on_enter_admin)
+admin_button.bind("<Leave>", on_leave_admin)
 
+
+dinein_button.grid(row=5, column=1, pady=20, padx=20)
+admin_button.grid(row=5, column=2, pady=20, padx=20)
+#//
 #submit_login = Button(root, text="Login", command=login)
 
 root.mainloop()
