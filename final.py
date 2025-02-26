@@ -7,7 +7,6 @@ from tkinter import messagebox, ttk
 from datetime import datetime
 
 
-
 def submit_data():
     name = e1.get()
     contact = e2.get()
@@ -43,10 +42,8 @@ def submit_data():
         if connection.is_connected():
             connection.close()
 
-
-
 def open_admin_login(): 
-    # Create popup window
+
     admin_window = Toplevel(root)
     admin_window.title("Admin Login")
     admin_window.geometry("300x150")
@@ -96,10 +93,6 @@ def open_admin_login():
     Button(admin_window,text="Log-in", command=verify_admin).pack(pady=10)
 
 
-
-
-
-
 def show_reservations(restaurant_name):
   
     reservations_window = Toplevel(root)
@@ -140,17 +133,6 @@ def show_reservations(restaurant_name):
             connection.close()
 
 
-
-
-
-
-
-
-
-
-
-
-
 def fetch_locations():
     try:
         connection = mysql.connector.connect(
@@ -171,17 +153,6 @@ def fetch_locations():
         return []
 
 
-    
-    
-
-
-
-
-
-
-
-
-
 root = Tk()
 root.title("Restaurant Table Booking System")
 root.iconbitmap("table.ico")
@@ -200,32 +171,14 @@ root.config(bg="Dark cyan")
 
 
 
-
-
-
-
-
-
-
 locations = fetch_locations()  
 location_dropdown = ttk.Combobox(root, values=locations)
 location_dropdown.place(x=420, y=130)
 
 
-
 choices = ['12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM', '5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM', '8:30 PM', '9:00 PM', '9:30 PM', '10:00 PM', '10:30 PM', '11:00 PM', '11:30 PM']
 time_dropdown =ttk.Combobox(root, values=["12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM", "10:00 PM", "10:30 PM", "11:00 PM", "11:30 PM"])
 time_dropdown.place(x=420, y=210)
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -249,19 +202,9 @@ e6 = Entry(root)
 e6.place(x=420, y=250)
 
 
-
-
-
-
-
-
-
-
-
 submit_button = Button(root, text="DINE-IN", command=submit_data,bg= "Gray")
 submit_button.place(x=400, y=350)
 submit_button2 = Button(root, text="ADMIN", command=open_admin_login, bg="Gray")
 submit_button2.place(x=500, y=350)
-
 
 root.mainloop()
