@@ -1,5 +1,10 @@
 import tkinter as tk
 from tkinter import messagebox
+"""
+Customer Dashboard - GUI
+Author: [Adwitiya Pandey]
+Date: [2025-02-11]
+"""
 root = tk.Tk()
 root.title("Admin Login")
 root.geometry("300x150")
