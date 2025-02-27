@@ -3,6 +3,11 @@ from PIL import ImageTk, Image
 from tkinter import ttk
 from tkinter import messagebox, ttk
 from datetime import datetime
+"""
+Customer Dashboard - GUI
+Author: [Adwitiya Pandey]
+Date: [2025-02-11]
+"""
 
 
 
